@@ -8,15 +8,31 @@
 
 namespace BenTools\HttpClientWrapper;
 
+use GuzzleHttp\Promise AS GuzzlePromise;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Response as PSR7Response;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @method ResponseInterface get($uri, array $options = [])
+ * @method ResponseInterface head($uri, array $options = [])
+ * @method ResponseInterface put($uri, array $options = [])
+ * @method ResponseInterface post($uri, array $options = [])
+ * @method ResponseInterface patch($uri, array $options = [])
+ * @method ResponseInterface delete($uri, array $options = [])
+ * @method GuzzlePromise\PromiseInterface getAsync($uri, array $options = [])
+ * @method GuzzlePromise\PromiseInterface headAsync($uri, array $options = [])
+ * @method GuzzlePromise\PromiseInterface putAsync($uri, array $options = [])
+ * @method GuzzlePromise\PromiseInterface postAsync($uri, array $options = [])
+ * @method GuzzlePromise\PromiseInterface patchAsync($uri, array $options = [])
+ * @method GuzzlePromise\PromiseInterface deleteAsync($uri, array $options = [])
+ */
 class HttpClientWrapper {
 
     /**
@@ -272,5 +288,23 @@ class HttpClientWrapper {
             'method'   => $request->getMethod(),
         ];
         return md5(json_encode($data));
+    }
+
+    /**
+     * @param $method
+     * @param $args
+     * @return \GuzzleHttp\Promise\PromiseInterface|mixed|\Psr\Http\Message\ResponseInterface
+     */
+    public function __call($method, $args) {
+        if (count($args) < 1) {
+            throw new \InvalidArgumentException('Magic request methods require a URI and optional options array');
+        }
+
+        $uri = $args[0];
+        $opts = isset($args[1]) ? $args[1] : [];
+
+        return substr($method, -5) === 'Async'
+            ? $this->client->requestAsync(substr($method, 0, -5), $uri, $opts)
+            : $this->client->request($method, $uri, $opts);
     }
 }

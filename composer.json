@@ -1,0 +1,31 @@
+{
+  "name": "bentools/httpclientwrapper",
+  "type": "library",
+  "description": "A httpfoundation-friendly GuzzleHTTP wrapper",
+  "homepage": "https://github.com/bpolaszek/bentools-httpclientwrapper",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Beno!t POLASZEK",
+      "role": "Developer"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/bpolaszek/bentools-httpclientwrapper"
+    }
+  ],
+  "require": {
+    "php": ">=5.3",
+    "symfony/psr-http-message-bridge": "0.*",
+    "zendframework/zend-diactoros": "1.1.*",
+    "guzzlehttp/guzzle":                  "~6.0",
+    "symfony/event-dispatcher": "~2.2",
+    "symfony/http-foundation": "~2.1"
+
+  },
+  "autoload": {
+    "psr-4": {"BenTools\\": "src/BenTools"}
+  }
+}

@@ -267,7 +267,8 @@ class HttpClientWrapper {
         $data = [
             'base_url' => $request->getBaseUrl(),
             'uri'      => $request->getUri(),
-            'params'   => $request->isMethod('GET') ? $request->query->all() : $request->request->all(),
+            'query'    => $request->query->all(),
+            'request'  => $request->isMethod('POST') || $request->isMethod('PUT') || $request->isMethod('PATCH') ? $request->request->all() : [],
             'method'   => $request->getMethod(),
         ];
         return md5(json_encode($data));
